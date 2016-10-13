@@ -9,7 +9,13 @@ import (
 	"github.com/seenickcode/go-web-socket-chat-example/chat"
 )
 
-func (api *API) createMessage(w http.ResponseWriter, r *http.Request) {
+type Message struct {
+	UserID   int
+	ThreadID int
+	Body     string
+}
+
+func (api *API) createThreadMessage(w http.ResponseWriter, r *http.Request) {
 
 	userID := 0   // TODO person posting the message
 	threadID := 0 // TODO thread ID of the conversation
@@ -25,6 +31,10 @@ func (api *API) createMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Debugf("sending broadcast message '%+v' to chat connection", broadcast)
 	api.chat.SocketHub.Broadcast(broadcast)
+
+	message := &Message{
+		userID, threadID, body,
+	}
 
 	renderJSON(w, NewWrappedAPIResponse(message), http.StatusCreated)
 }
